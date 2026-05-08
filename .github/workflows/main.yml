@@ -1,0 +1,31 @@
+name: MIV-CRAFT-FINAL-FIX
+on:
+  workflow_dispatch:
+
+jobs:
+  run-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Environment
+        run: |
+          sudo apt update
+          sudo apt install -y wget unzip libcurl4 libssl-dev
+          rm -rf server server.zip
+
+      - name: Force Download & Run
+        run: |
+          # رابط مباشر وقوي لإصدار 1.21.1.03
+          wget --user-agent="Mozilla/5.0" "https://minecraft.azureedge.net/bin-linux/bedrock-server-1.21.1.03.zip" -O server.zip
+          
+          unzip -o server.zip -d server
+          cd server
+          chmod +x bedrock_server
+          
+          # هذه الخطوة لحل مشكلة الـ Exit Code 4 (إجبار النظام على التعرف على المكتبات)
+          export LD_LIBRARY_PATH=.
+          
+          # تشغيل السيرفر ومنع إغلاقه التلقائي
+          ./bedrock_server
