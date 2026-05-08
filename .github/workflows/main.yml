@@ -1,0 +1,26 @@
+name: MIV-CRAFT-24GB
+on:
+  workflow_dispatch:
+
+jobs:
+  run-server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Boost RAM to 24GB
+        run: |
+          sudo fallocate -l 8G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          free -h
+
+      - name: Start Bedrock Server
+        run: |
+          sudo apt update
+          wget https://minecraft.azureedge.net/bin-linux/bedrock-server-1.20.73.01.zip
+          unzip bedrock-server-*.zip -d server
+          cd server
+          chmod +x bedrock_server
+          LD_LIBRARY_PATH=. ./bedrock_server
